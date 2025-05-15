@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rompecabezas</title>
+    <style>
+    body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        background-color: #9ed8fa;
+    }
+    
+    .puzzle-container {
+        width: 734px;
+        height: 512px;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        grid-template-rows: repeat(2, 1fr);
+        gap: 5px;
+        margin: auto;
+    }
+    
+    .piece {
+        width: 180px;
+        height: 250px;
+        background-image: url('Rompecabezas.png'); /* Imagen del rompecabezas */
+        background-size: 734px 512px;
+        cursor: grab;
+    }
+    
+    /* Posicionamiento inicial de las piezas */
+    #piece1 { background-position: 0px 0px; }
+    #piece2 { background-position: -180px 0px; }
+    #piece3 { background-position: -360px 0px; }
+    #piece4 { background-position: -540px 0px; }
+    #piece5 { background-position: 0px -250px; }
+    #piece6 { background-position: -180px -250px; }
+    #piece7 { background-position: -360px -250px; }
+    #piece8 { background-position: -540px -250px; }
+    </style>
+</head>
+<body>
+    <h1>Rompecabezas Interactivo</h1>
+    <div class="puzzle-container">
+        <div class="piece" id="piece1" draggable="true" data-position="0"></div>
+        <div class="piece" id="piece2" draggable="true" data-position="1"></div>
+        <div class="piece" id="piece3" draggable="true" data-position="2"></div>
+        <div class="piece" id="piece4" draggable="true" data-position="3"></div>
+        <div class="piece" id="piece5" draggable="true" data-position="4"></div>
+        <div class="piece" id="piece6" draggable="true" data-position="5"></div>
+        <div class="piece" id="piece7" draggable="true" data-position="6"></div>
+        <div class="piece" id="piece8" draggable="true" data-position="7"></div>
+    </div>
+    <center>
+        <button class="boton-memorama" onclick="window.location.href='granjarama.html'">Inicio</button>
+    </center>
+    <script>
+    const pieces = Array.from(document.querySelectorAll(".piece"));
+
+    // Mezcla aleatoriamente las piezas
+    pieces.sort(() => Math.random() - 0.5);
+    pieces.forEach((piece, index) => {
+        document.querySelector(".puzzle-container").appendChild(piece);
+        piece.dataset.currentPosition = index;
+    });
+
+    pieces.forEach(piece => {
+        piece.addEventListener("dragstart", (e) => {
+            e.dataTransfer.setData("text", e.target.id);
+        });
+
+        piece.addEventListener("dragover", (e) => {
+            e.preventDefault();
+        });
+
+        piece.addEventListener("drop", (e) => {
+            e.preventDefault();
+            const draggedPieceId = e.dataTransfer.getData("text");
+            const draggedPiece = document.getElementById(draggedPieceId);
+            const targetPiece = e.target;
+
+            // Intercambia posiciones en el DOM
+            let draggedIndex = draggedPiece.dataset.currentPosition;
+            let targetIndex = targetPiece.dataset.currentPosition;
+            
+            draggedPiece.dataset.currentPosition = targetIndex;
+            targetPiece.dataset.currentPosition = draggedIndex;
+
+            document.querySelector(".puzzle-container").insertBefore(draggedPiece, targetPiece);
+
+            checkWin();
+        });
+    });
+
+    function checkWin() {
+        let correct = pieces.every(piece => piece.dataset.currentPosition == piece.dataset.position);
+        if (correct) {
+            alert("¡Felicidades! Has completado el rompecabezas.");
+        }
+    }
+    </script>
+</body>
+</html>

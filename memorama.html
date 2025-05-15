@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Granjarama</title>
+    <style>
+        body {
+            background-image: url('Cielo.png'); /* Cambia 'fondo.jpg' por la ruta de tu imagen */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+         
+        .game-board {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            width: 100%;
+            max-width: 1000px;
+            margin: auto;
+        }
+        .card {
+            width: 238px;
+            height: 357px;
+            perspective: 1000px;
+            cursor: pointer;
+            border-radius: 35px;
+            overflow: hidden;
+        }
+        .card-inner {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.6s;
+        }
+        .card.flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+        .card-front, .card-back {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            backface-visibility: hidden;
+        }
+        .card-front {
+            background-color: #a1ce00;
+            background-image: url(Reverso.png);
+            background-size: 238px 357px;
+            display:flex
+        }
+        .card-back {
+            transform: rotateY(180deg);
+        }
+        
+        .boton-inicio {
+    font-size: 24px;
+    padding: 15px 30px;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 10px;
+    transition: 0.3s;
+    margin-top: 30px; /* Ajusta la distancia del botón */
+
+
+}
+
+    </style>
+</head>
+<body>
+     
+<center>
+    <img src="Granjarama.png" width="800">
+    </center>
+    <div class="game-board"></div>
+<center>
+    <button class="boton-memorama" onclick="window.location.href='granjarama.html'">Inicio</button>
+</center>
+  
+    <script>
+
+        const images = [
+            "POLLO.png", "VACA.png", "PATO.png", "OVEJA.png",
+            "GALLINA.png", "CONEJO.png", "CERDO.png", "CABALLO.png",
+            "POLLO.png", "VACA.png", "PATO.png", "OVEJA.png",
+            "GALLINA.png", "CONEJO.png", "CERDO.png", "CABALLO.png"
+        ].sort(() => Math.random() - 0.5);
+
+        const sounds = {
+        "POLLO.png": "Pollo.mp3",
+        "VACA.png": "Vaca.mp3",
+        "PATO.png": "Pato.mp3",
+        "OVEJA.png": "Oveja.mp3",
+        "GALLINA.png": "Gallina.mp3",
+        "CONEJO.png": "Conejo.mp3",
+        "CERDO.png": "Cerdo.mp3",
+        "CABALLO.png": "Caballo.mp3"
+    };
+
+
+        const board = document.querySelector('.game-board');
+        let selectedCards = [];
+        let matchedPairs = 0;
+
+        images.forEach(image => {
+            const card = document.createElement('div');
+            card.classList.add('card');
+            card.innerHTML = `
+                <div class="card-inner">
+                    <div class="card-front"></div>
+                    <div class="card-back">
+                        <img src="${image}" width="238" height="357">
+                    </div>
+                </div>
+            `;
+
+            card.addEventListener('click', () => {
+                if (selectedCards.length < 2 && !card.classList.contains('flipped')) {
+                    card.classList.add('flipped');
+                    selectedCards.push(card);
+
+        // Obtén el nombre de la imagen de la tarjeta
+        const imgSrc = card.querySelector(".card-back img").getAttribute("src");
+        const fileName = imgSrc.split("/").pop(); // Extrae solo el nombre del archivo
+
+        // Reproduce el sonido asociado
+        if (sounds[fileName]) {
+            const audio = new Audio(sounds[fileName]);
+            audio.play();
+        }
+                    
+
+                    if (selectedCards.length === 2) {
+                        setTimeout(() => {
+                            const [first, second] = selectedCards;
+                            if (first.innerHTML !== second.innerHTML) {
+                                first.classList.remove('flipped');
+                                second.classList.remove('flipped');
+                            } else {
+                                matchedPairs++;
+                                if (matchedPairs === 8) alert('¡Ganaste!');
+                            }
+                            selectedCards = [];
+                        }, 1000);
+                    }
+                }
+            });
+
+            board.appendChild(card);
+        });
+        
+    </script>
+</body>
+</html>

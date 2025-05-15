@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pintar con Pincel</title>
+    <style>
+        body {
+            text-align: center;
+            font-family: Arial, sans-serif;
+        }
+        canvas {
+            border: 1px solid rgb(0, 0, 0);
+            cursor: crosshair;
+        }
+        .controls {
+            margin: 10px;
+        }
+    </style>
+</head>
+<body>
+    <center>
+        <button class="boton-memorama" onclick="window.location.href='granjarama.html'">Inicio</button>
+    </center>
+    <h1>Pinta con el pincel</h1>
+    <input type="color" id="colorPicker" class="controls">
+    <input type="range" id="brushSize" class="controls" min="1" max="20" value="5">
+    <span id="sizeDisplay">5px</span>
+    <button id="brushButton" class="controls">Pincel</button>
+    <button id="eraserButton" class="controls">Goma</button>
+    <button id="clearButton" class="controls">Borrar Todo</button>
+    <button id="saveButton" class="controls">Guardar Dibujo</button>
+    <canvas id="canvas" width="500" height="500"></canvas>
+    <script>
+        const canvas = document.getElementById("canvas");
+        const ctx = canvas.getContext("2d");
+        const colorPicker = document.getElementById("colorPicker");
+        const brushSize = document.getElementById("brushSize");
+        const sizeDisplay = document.getElementById("sizeDisplay");
+        const brushButton = document.getElementById("brushButton");
+        const eraserButton = document.getElementById("eraserButton");
+        const clearButton = document.getElementById("clearButton");
+        const saveButton = document.getElementById("saveButton");
+
+        let isDrawing = false;
+        let tool = "brush";
+        let size = brushSize.value;
+
+        // Cargar imagen base
+        const img = new Image();
+        img.src = "Colorear.png"; // Reemplaza con tu imagen en blanco y negro
+        img.onload = () => ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+        // Detección de dibujo
+        canvas.addEventListener("mousedown", () => isDrawing = true);
+        canvas.addEventListener("mouseup", () => isDrawing = false);
+        canvas.addEventListener("mousemove", draw);
+
+        function draw(event) {
+            if (!isDrawing) return;
+            const rect = canvas.getBoundingClientRect();
+            const x = event.clientX - rect.left;
+            const y = event.clientY - rect.top;
+
+            ctx.lineWidth = size;
+            ctx.lineCap = "round";
+
+            if (tool === "brush") {
+                ctx.strokeStyle = colorPicker.value;
+            } else if (tool === "eraser") {
+                ctx.strokeStyle = "#FFFFFF"; // Fondo blanco
+            }
+
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+            ctx.lineTo(x, y);
+            ctx.stroke();
+        }
+
+        // Cambiar herramienta
+        brushButton.addEventListener("click", () => tool = "brush");
+        eraserButton.addEventListener("click", () => tool = "eraser");
+
+        // Ajustar tamaño del pincel
+        brushSize.addEventListener("input", () => {
+            size = brushSize.value;
+            sizeDisplay.textContent = `${size}px`;
+        });
+
+        // Borrar todo el dibujo
+        clearButton.addEventListener("click", () => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        });
+
+        // Guardar imagen
+        saveButton.addEventListener("click", () => {
+            const link = document.createElement("a");
+            link.download = "mi_dibujo.png";
+            link.href = canvas.toDataURL("image/png");
+            link.click();
+        });
+    </script>
+</body>
+</html>
