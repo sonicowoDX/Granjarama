@@ -59,6 +59,23 @@
 
 }
 
+.footer {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  background-color: #f2f2f2;
+  text-align: center;
+  padding: 10px 0;
+  font-size: 14px;
+  color: #333;
+  border-top: 1px solid #ccc;
+  z-index: 1000;
+}
+
+body {
+  padding-bottom: 60px; /* Para evitar que el contenido se oculte detrás del footer */
+}
+
     </style>
 </head>
 <body>
@@ -67,5 +84,11 @@
     <button class="boton-rompecabezas" onclick="window.location.href='rompeinstrucciones.html'">Rompecabezas</button>
 
     <button class="boton-colorea" onclick="window.location.href='colorinstrucciones.html'">Colorear</button>
+    <footer class="footer">
+      <p>
+        Hecho por Diana Aragón Jaime, Marycarmen Rosas Recillas y Sebastian Cordero Vazquez 8B Gráfico<br>
+        <span>&reg;</span> Todos los derechos reservados
+      </p>
+    </footer>
 </body>
 </html>
